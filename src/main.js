@@ -1,5 +1,5 @@
-import { detect } from 'detect-browser'
-import Emitter from 'tiny-emitter'
+import { detect } from './utils/browser-detect.js'
+import Emitter from './utils/emitter.js'
 
 import situations from './model/situations.js'
 
@@ -12,29 +12,37 @@ export default class iOSUIOverlayDetector extends Emitter {
 
     //console.log(window.screen.height - window.innerHeight);
 
-    this.checker = setInterval(() => {
-      this.applyMode();
-    }, interval);
+    if (typeof window !== 'undefined') {
+      this.checker = setInterval(() => {
+        this.applyMode();
+      }, interval);
 
-    this.applyMode = () => {
-      if (this.__static_mode != this.mode) {
-        this.updateStaticMode();
-        this.__behaviourDedtected = true;
-        this.emit('update', this.mode);
+      this.applyMode = () => {
+        if (this.__static_mode != this.mode) {
+          this.updateStaticMode();
+          this.__behaviourDedtected = true;
+          this.emit('update', this.mode);
+        }
       }
-    }
-    window.addEventListener('resize', this.applyMode);
+      window.addEventListener('resize', this.applyMode);
 
-    this.applyMode();
+      this.applyMode();
+    }
   }
   updateStaticMode() {
     this.__static_mode = this.mode;
   }
   destroy() {
-    window.removeEventListener(this.applyMode);
-    window.clearInterval(this.checker);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.applyMode);
+      if (this.checker) {
+        window.clearInterval(this.checker);
+      }
+    }
   }
   get mode() {
+    if (typeof window === 'undefined') return null;
+    
     if (this.isTargetDevice && this.situation && !window.navigator.standalone) {
       return this.situation.mode;
     }
