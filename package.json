@@ -48,10 +48,7 @@
     "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0"
   },
-  "dependencies": {
-    "detect-browser": "^5.2.1",
-    "tiny-emitter": "^2.1.0"
-  },
+
   "repository": {
     "type": "git",
     "url": "https://github.com/MauriceConrad/detect-ios-address-bar.git"
